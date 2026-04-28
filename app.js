@@ -3,7 +3,9 @@ const API_URL = "https://script.google.com/macros/s/AKfycbwEOfunJbNCn2ZUoEc9rDxu
 let globalInventory = [];
 let globalLogs = [];
 
+// ==========================
 // LOAD DATA
+// ==========================
 async function loadData() {
   const res = await fetch(API_URL);
   const data = await res.json();
@@ -11,45 +13,44 @@ async function loadData() {
   globalInventory = data.inventory;
   globalLogs = data.logs;
 
-  populateCategories();
+  populateDropdown();     // 🔥 FIX
   renderInventory(globalInventory);
   renderLogs(globalLogs);
 }
 
-// CATEGORY DROPDOWN
-function populateCategories() {
-  const select = document.getElementById("categoryFilter");
+// ==========================
+// 🔥 POPULATE DROPDOWN (CRITICAL FIX)
+// ==========================
+function populateDropdown() {
+  const select = document.getElementById("item");
   if (!select) return;
 
-  select.innerHTML = `<option value="">All Categories</option>`;
+  select.innerHTML = "";
 
-  const categories = [...new Set(globalInventory.map(i => i.category))];
-
-  categories.forEach(cat => {
+  globalInventory.forEach(i => {
     const option = document.createElement("option");
-    option.value = cat;
-    option.textContent = cat;
+    option.value = i.name;
+    option.textContent = `${i.name} (${i.qty})`;
     select.appendChild(option);
   });
 }
 
-// FILTER FUNCTION
-function filterItems() {
-  const search = document.getElementById("search").value.toLowerCase();
-  const category = document.getElementById("categoryFilter").value;
+// ==========================
+// 🔍 FILTER DROPDOWN
+// ==========================
+function filterDropdown() {
+  const search = document.getElementById("itemSearch").value.toLowerCase();
+  const select = document.getElementById("item");
 
-  let filtered = globalInventory.filter(i =>
-    i.name.toLowerCase().includes(search)
-  );
-
-  if (category) {
-    filtered = filtered.filter(i => i.category === category);
-  }
-
-  renderInventory(filtered);
+  Array.from(select.options).forEach(option => {
+    const text = option.text.toLowerCase();
+    option.style.display = text.includes(search) ? "block" : "none";
+  });
 }
 
-// INVENTORY DISPLAY
+// ==========================
+// DASHBOARD INVENTORY
+// ==========================
 function renderInventory(inventory) {
   const list = document.getElementById("inventoryList");
   if (!list) return;
@@ -71,7 +72,9 @@ function renderInventory(inventory) {
   });
 }
 
-// LOG DISPLAY
+// ==========================
+// LOGS
+// ==========================
 function renderLogs(logs) {
   const logList = document.getElementById("logList");
   if (!logList) return;
@@ -85,7 +88,9 @@ function renderLogs(logs) {
   });
 }
 
+// ==========================
 // WITHDRAW
+// ==========================
 async function withdraw() {
   const name = document.getElementById("name").value;
   const item = document.getElementById("item").value;
@@ -108,7 +113,9 @@ async function withdraw() {
   loadData();
 }
 
+// ==========================
 // RETURN
+// ==========================
 async function returnItem() {
   const name = document.getElementById("name").value;
   const item = document.getElementById("item").value;
@@ -131,4 +138,7 @@ async function returnItem() {
   loadData();
 }
 
+// ==========================
+// INIT
+// ==========================
 window.onload = loadData;
