@@ -25,13 +25,32 @@
       margin-bottom: 20px;
     }
 
-    input, select {
+    input {
       width: 100%;
       padding: 12px;
       margin: 10px 0;
       border-radius: 8px;
       border: 1px solid #ccc;
       font-size: 16px;
+    }
+
+    .suggestions {
+      text-align: left;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      max-height: 150px;
+      overflow-y: auto;
+      margin-top: -8px;
+      margin-bottom: 10px;
+    }
+
+    .suggestions div {
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    .suggestions div:hover {
+      background: #eee;
     }
 
     button {
@@ -59,10 +78,11 @@
 
   <input id="name" placeholder="Your Name">
 
-  <!-- Search bar for large inventory -->
-  <input id="itemSearch" placeholder="Search item..." oninput="filterDropdown()">
+  <input id="itemSearch" placeholder="Search item..." oninput="showSuggestions()">
 
-  <select id="item"></select>
+  <div id="suggestions" class="suggestions"></div>
+
+  <input id="selectedItem" placeholder="Selected item" readonly>
 
   <input id="qty" type="number" placeholder="Quantity">
 
