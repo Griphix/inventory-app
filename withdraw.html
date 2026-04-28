@@ -43,7 +43,12 @@
   <h1>Withdraw</h1>
 
   <input id="name" placeholder="Your Name">
+
+  <!-- NEW: Search box -->
+  <input id="itemSearch" placeholder="Search item..." oninput="filterDropdown()">
+
   <select id="item"></select>
+
   <input id="qty" type="number" placeholder="Quantity">
 
   <button onclick="withdraw()">Submit</button>
