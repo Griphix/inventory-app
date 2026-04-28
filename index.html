@@ -7,16 +7,18 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f4f7f6;
-      padding: 30px;
+      background: #eef2f3;
+      margin: 0;
+      padding: 20px;
     }
 
     .container {
-      max-width: 700px;
+      max-width: 800px;
       margin: auto;
     }
 
     h1 {
+      text-align: center;
       margin-bottom: 20px;
     }
 
@@ -25,32 +27,46 @@
       padding: 20px;
       margin-bottom: 20px;
       border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     }
 
     .stock-item {
       display: flex;
       justify-content: space-between;
-      padding: 10px 0;
-      border-bottom: 1px solid #eee;
+      padding: 12px;
+      margin-bottom: 8px;
+      border-radius: 8px;
+      background: #f9f9f9;
     }
 
     .low {
+      background: #ffe5e5;
       color: red;
       font-weight: bold;
     }
 
+    ul {
+      padding-left: 20px;
+    }
+
+    .btn-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
     button {
-      padding: 12px 20px;
-      margin: 5px;
+      flex: 1;
+      padding: 14px;
       font-size: 16px;
-      border-radius: 8px;
+      border-radius: 10px;
       border: none;
       cursor: pointer;
     }
 
     .withdraw { background: #27ae60; color: white; }
     .return { background: #3498db; color: white; }
+
   </style>
 </head>
 
@@ -61,17 +77,19 @@
 <h1>Inventory Dashboard</h1>
 
 <div class="card">
-  <h3>Stock</h3>
+  <h3>📦 Stock</h3>
   <div id="inventoryList"></div>
 </div>
 
 <div class="card">
-  <h3>Recent Activity</h3>
+  <h3>🧾 Recent Activity</h3>
   <ul id="logList"></ul>
 </div>
 
-<button class="withdraw" onclick="location.href='withdraw.html'">Withdraw</button>
-<button class="return" onclick="location.href='return.html'">Return</button>
+<div class="btn-container">
+  <button class="withdraw" onclick="location.href='withdraw.html'">Withdraw</button>
+  <button class="return" onclick="location.href='return.html'">Return</button>
+</div>
 
 </div>
 
