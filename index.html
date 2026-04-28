@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Inventory Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    body { font-family: Arial; padding: 30px; }
+    h1 { margin-bottom: 20px; }
+
+    .card {
+      background: #f4f7f6;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+    }
+
+    .low { color: red; font-weight: bold; }
+
+    button {
+      padding: 12px 20px;
+      margin: 5px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>Inventory Dashboard</h1>
+
+<div class="card">
+  <h3>Stock</h3>
+  <ul id="inventoryList"></ul>
+</div>
+
+<div class="card">
+  <h3>Recent Activity</h3>
+  <ul id="logList"></ul>
+</div>
+
+<button onclick="location.href='withdraw.html'">Withdraw</button>
+<button onclick="location.href='return.html'">Return</button>
+
+<script src="app.js"></script>
+
+</body>
+</html>
