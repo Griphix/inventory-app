@@ -4,22 +4,34 @@ let globalInventory = [];
 let globalLogs = [];
 
 // ==========================
-// LOAD DATA
+// LOAD DATA (SAFE VERSION)
 // ==========================
 async function loadData() {
-  const res = await fetch(API_URL);
-  const data = await res.json();
+  try {
+    const res = await fetch(API_URL);
+    const data = await res.json();
 
-  globalInventory = data.inventory;
-  globalLogs = data.logs;
+    globalInventory = data.inventory || [];
+    globalLogs = data.logs || [];
 
-  populateDropdown();     // 🔥 FIX
-  renderInventory(globalInventory);
-  renderLogs(globalLogs);
+    populateDropdown();
+
+    // Only run if elements exist (PREVENT CRASH)
+    if (document.getElementById("inventoryList")) {
+      renderInventory(globalInventory);
+    }
+
+    if (document.getElementById("logList")) {
+      renderLogs(globalLogs);
+    }
+
+  } catch (err) {
+    console.error("LOAD ERROR:", err);
+  }
 }
 
 // ==========================
-// 🔥 POPULATE DROPDOWN (CRITICAL FIX)
+// POPULATE DROPDOWN
 // ==========================
 function populateDropdown() {
   const select = document.getElementById("item");
@@ -36,7 +48,7 @@ function populateDropdown() {
 }
 
 // ==========================
-// 🔍 FILTER DROPDOWN
+// FILTER DROPDOWN
 // ==========================
 function filterDropdown() {
   const search = document.getElementById("itemSearch").value.toLowerCase();
@@ -49,7 +61,7 @@ function filterDropdown() {
 }
 
 // ==========================
-// DASHBOARD INVENTORY
+// DASHBOARD
 // ==========================
 function renderInventory(inventory) {
   const list = document.getElementById("inventoryList");
@@ -110,7 +122,6 @@ async function withdraw() {
   });
 
   alert("Done");
-  loadData();
 }
 
 // ==========================
@@ -135,10 +146,7 @@ async function returnItem() {
   });
 
   alert("Done");
-  loadData();
 }
 
-// ==========================
-// INIT
 // ==========================
 window.onload = loadData;
