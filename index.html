@@ -5,33 +5,64 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
-    body { font-family: Arial; padding: 30px; }
-    h1 { margin-bottom: 20px; }
-
-    .card {
+    body {
+      font-family: Arial, sans-serif;
       background: #f4f7f6;
-      padding: 20px;
-      margin-bottom: 20px;
-      border-radius: 10px;
+      padding: 30px;
     }
 
-    .low { color: red; font-weight: bold; }
+    .container {
+      max-width: 700px;
+      margin: auto;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    }
+
+    .stock-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .low {
+      color: red;
+      font-weight: bold;
+    }
 
     button {
       padding: 12px 20px;
       margin: 5px;
       font-size: 16px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
     }
+
+    .withdraw { background: #27ae60; color: white; }
+    .return { background: #3498db; color: white; }
   </style>
 </head>
 
 <body>
 
+<div class="container">
+
 <h1>Inventory Dashboard</h1>
 
 <div class="card">
   <h3>Stock</h3>
-  <ul id="inventoryList"></ul>
+  <div id="inventoryList"></div>
 </div>
 
 <div class="card">
@@ -39,8 +70,10 @@
   <ul id="logList"></ul>
 </div>
 
-<button onclick="location.href='withdraw.html'">Withdraw</button>
-<button onclick="location.href='return.html'">Return</button>
+<button class="withdraw" onclick="location.href='withdraw.html'">Withdraw</button>
+<button class="return" onclick="location.href='return.html'">Return</button>
+
+</div>
 
 <script src="app.js"></script>
 
