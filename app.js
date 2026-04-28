@@ -9,7 +9,7 @@ async function loadData() {
   loadDashboard(data.inventory, data.logs);
 }
 
-// DROPDOWN
+// LOAD DROPDOWN
 function loadItems(inventory) {
   const select = document.getElementById("item");
   if (!select) return;
@@ -31,18 +31,25 @@ function loadDashboard(inventory, logs) {
 
   if (list) {
     list.innerHTML = "";
+
     inventory.forEach(i => {
-      const li = document.createElement("li");
+      const div = document.createElement("div");
+      div.className = "stock-item";
 
-      let cls = i.qty <= 3 ? "low" : "";
-      li.innerHTML = `<span class="${cls}">${i.name}: ${i.qty}</span>`;
+      const lowClass = i.qty <= 3 ? "low" : "";
 
-      list.appendChild(li);
+      div.innerHTML = `
+        <span>${i.name}</span>
+        <span class="${lowClass}">${i.qty}</span>
+      `;
+
+      list.appendChild(div);
     });
   }
 
   if (logList) {
     logList.innerHTML = "";
+
     logs.slice(-10).reverse().forEach(l => {
       const li = document.createElement("li");
       li.textContent = `${l.name} ${l.action} ${l.qty} ${l.item}`;
