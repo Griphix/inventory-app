@@ -4,7 +4,7 @@ let globalInventory = [];
 let globalLogs = [];
 
 // ==========================
-// LOAD DATA SAFELY
+// LOAD DATA
 // ==========================
 async function loadData() {
   try {
@@ -14,7 +14,8 @@ async function loadData() {
     globalInventory = data.inventory || [];
     globalLogs = data.logs || [];
 
-    // Only run if elements exist
+    populateCategories(); // 🔥 THIS WAS MISSING
+
     if (document.getElementById("inventoryList")) {
       renderInventory(globalInventory);
     }
@@ -29,33 +30,46 @@ async function loadData() {
 }
 
 // ==========================
-// SEARCH SUGGESTIONS
+// 🔥 POPULATE CATEGORY DROPDOWN
 // ==========================
-function showSuggestions() {
-  const search = document.getElementById("itemSearch").value.toLowerCase();
-  const box = document.getElementById("suggestions");
+function populateCategories() {
+  const select = document.getElementById("categoryFilter");
+  if (!select) return;
 
-  if (!box) return;
+  // Reset dropdown
+  select.innerHTML = `<option value="">All Categories</option>`;
 
-  box.innerHTML = "";
+  // Get unique categories
+  const categories = [...new Set(globalInventory.map(i => i.category))];
 
-  globalInventory
-    .filter(i => i.name.toLowerCase().includes(search))
-    .forEach(i => {
-      const div = document.createElement("div");
-      div.textContent = `${i.name} (${i.qty})`;
-
-      div.onclick = () => {
-        document.getElementById("selectedItem").value = i.name;
-        box.innerHTML = "";
-      };
-
-      box.appendChild(div);
-    });
+  categories.forEach(cat => {
+    const option = document.createElement("option");
+    option.value = cat;
+    option.textContent = cat;
+    select.appendChild(option);
+  });
 }
 
 // ==========================
-// DASHBOARD INVENTORY
+// 🔍 FILTER ITEMS
+// ==========================
+function filterItems() {
+  const search = document.getElementById("search").value.toLowerCase();
+  const category = document.getElementById("categoryFilter").value;
+
+  let filtered = globalInventory.filter(i =>
+    i.name.toLowerCase().includes(search)
+  );
+
+  if (category) {
+    filtered = filtered.filter(i => i.category === category);
+  }
+
+  renderInventory(filtered);
+}
+
+// ==========================
+// INVENTORY DISPLAY
 // ==========================
 function renderInventory(inventory) {
   const list = document.getElementById("inventoryList");
@@ -92,6 +106,32 @@ function renderLogs(logs) {
     li.textContent = `${l.name} ${l.action} ${l.qty} ${l.item}`;
     logList.appendChild(li);
   });
+}
+
+// ==========================
+// SEARCH SUGGESTIONS (Withdraw/Return)
+// ==========================
+function showSuggestions() {
+  const search = document.getElementById("itemSearch").value.toLowerCase();
+  const box = document.getElementById("suggestions");
+
+  if (!box) return;
+
+  box.innerHTML = "";
+
+  globalInventory
+    .filter(i => i.name.toLowerCase().includes(search))
+    .forEach(i => {
+      const div = document.createElement("div");
+      div.textContent = `${i.name} (${i.qty})`;
+
+      div.onclick = () => {
+        document.getElementById("selectedItem").value = i.name;
+        box.innerHTML = "";
+      };
+
+      box.appendChild(div);
+    });
 }
 
 // ==========================
