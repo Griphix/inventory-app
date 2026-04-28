@@ -4,7 +4,7 @@ let globalInventory = [];
 let globalLogs = [];
 
 // ==========================
-// LOAD DATA (SAFE VERSION)
+// LOAD DATA SAFELY
 // ==========================
 async function loadData() {
   try {
@@ -14,9 +14,7 @@ async function loadData() {
     globalInventory = data.inventory || [];
     globalLogs = data.logs || [];
 
-    populateDropdown();
-
-    // Only run if elements exist (PREVENT CRASH)
+    // Only run if elements exist
     if (document.getElementById("inventoryList")) {
       renderInventory(globalInventory);
     }
@@ -26,42 +24,38 @@ async function loadData() {
     }
 
   } catch (err) {
-    console.error("LOAD ERROR:", err);
+    console.error("Load error:", err);
   }
 }
 
 // ==========================
-// POPULATE DROPDOWN
+// SEARCH SUGGESTIONS
 // ==========================
-function populateDropdown() {
-  const select = document.getElementById("item");
-  if (!select) return;
-
-  select.innerHTML = "";
-
-  globalInventory.forEach(i => {
-    const option = document.createElement("option");
-    option.value = i.name;
-    option.textContent = `${i.name} (${i.qty})`;
-    select.appendChild(option);
-  });
-}
-
-// ==========================
-// FILTER DROPDOWN
-// ==========================
-function filterDropdown() {
+function showSuggestions() {
   const search = document.getElementById("itemSearch").value.toLowerCase();
-  const select = document.getElementById("item");
+  const box = document.getElementById("suggestions");
 
-  Array.from(select.options).forEach(option => {
-    const text = option.text.toLowerCase();
-    option.style.display = text.includes(search) ? "block" : "none";
-  });
+  if (!box) return;
+
+  box.innerHTML = "";
+
+  globalInventory
+    .filter(i => i.name.toLowerCase().includes(search))
+    .forEach(i => {
+      const div = document.createElement("div");
+      div.textContent = `${i.name} (${i.qty})`;
+
+      div.onclick = () => {
+        document.getElementById("selectedItem").value = i.name;
+        box.innerHTML = "";
+      };
+
+      box.appendChild(div);
+    });
 }
 
 // ==========================
-// DASHBOARD
+// DASHBOARD INVENTORY
 // ==========================
 function renderInventory(inventory) {
   const list = document.getElementById("inventoryList");
@@ -105,10 +99,13 @@ function renderLogs(logs) {
 // ==========================
 async function withdraw() {
   const name = document.getElementById("name").value;
-  const item = document.getElementById("item").value;
+  const item = document.getElementById("selectedItem").value;
   const qty = parseInt(document.getElementById("qty").value);
 
-  if (!name || !qty) return alert("Fill all fields");
+  if (!name || !item || !qty) {
+    alert("Fill all fields properly");
+    return;
+  }
 
   await fetch(API_URL, {
     method: "POST",
@@ -121,7 +118,7 @@ async function withdraw() {
     })
   });
 
-  alert("Done");
+  alert("Withdraw successful");
 }
 
 // ==========================
@@ -129,10 +126,13 @@ async function withdraw() {
 // ==========================
 async function returnItem() {
   const name = document.getElementById("name").value;
-  const item = document.getElementById("item").value;
+  const item = document.getElementById("selectedItem").value;
   const qty = parseInt(document.getElementById("qty").value);
 
-  if (!name || !qty) return alert("Fill all fields");
+  if (!name || !item || !qty) {
+    alert("Fill all fields properly");
+    return;
+  }
 
   await fetch(API_URL, {
     method: "POST",
@@ -145,7 +145,7 @@ async function returnItem() {
     })
   });
 
-  alert("Done");
+  alert("Return successful");
 }
 
 // ==========================
