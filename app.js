@@ -14,7 +14,8 @@ async function loadData() {
     globalInventory = data.inventory || [];
     globalLogs = data.logs || [];
 
-    populateCategories(); // 🔥 THIS WAS MISSING
+    populateCategories();
+    updateStats();
 
     if (document.getElementById("inventoryList")) {
       renderInventory(globalInventory);
@@ -30,16 +31,14 @@ async function loadData() {
 }
 
 // ==========================
-// 🔥 POPULATE CATEGORY DROPDOWN
+// CATEGORY DROPDOWN
 // ==========================
 function populateCategories() {
   const select = document.getElementById("categoryFilter");
   if (!select) return;
 
-  // Reset dropdown
   select.innerHTML = `<option value="">All Categories</option>`;
 
-  // Get unique categories
   const categories = [...new Set(globalInventory.map(i => i.category))];
 
   categories.forEach(cat => {
@@ -51,11 +50,48 @@ function populateCategories() {
 }
 
 // ==========================
-// 🔍 FILTER ITEMS
+// STATS + ALERT
+// ==========================
+function updateStats() {
+  const totalItems = globalInventory.length;
+  const totalQty = globalInventory.reduce((sum, i) => sum + i.qty, 0);
+  const lowStock = globalInventory.filter(i => i.qty <= 3);
+
+  if (document.getElementById("totalItems")) {
+    document.getElementById("totalItems").textContent = totalItems;
+  }
+
+  if (document.getElementById("totalQty")) {
+    document.getElementById("totalQty").textContent = totalQty;
+  }
+
+  if (document.getElementById("lowCount")) {
+    document.getElementById("lowCount").textContent = lowStock.length;
+  }
+
+  const alertBox = document.getElementById("alertBox");
+
+  if (alertBox) {
+    if (lowStock.length > 0) {
+      alertBox.style.display = "block";
+      alertBox.textContent = `⚠️ ${lowStock.length} items are low on stock`;
+    } else {
+      alertBox.style.display = "none";
+    }
+  }
+}
+
+// ==========================
+// SEARCH + FILTER
 // ==========================
 function filterItems() {
-  const search = document.getElementById("search").value.toLowerCase();
-  const category = document.getElementById("categoryFilter").value;
+  const searchInput = document.getElementById("search");
+  const categoryInput = document.getElementById("categoryFilter");
+
+  if (!searchInput || !categoryInput) return;
+
+  const search = searchInput.value.toLowerCase();
+  const category = categoryInput.value;
 
   let filtered = globalInventory.filter(i =>
     i.name.toLowerCase().includes(search)
@@ -76,6 +112,9 @@ function renderInventory(inventory) {
   if (!list) return;
 
   list.innerHTML = "";
+
+  // Sort by lowest qty first
+  inventory.sort((a, b) => a.qty - b.qty);
 
   inventory.forEach(i => {
     const div = document.createElement("div");
@@ -109,14 +148,15 @@ function renderLogs(logs) {
 }
 
 // ==========================
-// SEARCH SUGGESTIONS (Withdraw/Return)
+// SEARCH SUGGESTIONS (WITHDRAW/RETURN)
 // ==========================
 function showSuggestions() {
-  const search = document.getElementById("itemSearch").value.toLowerCase();
+  const searchInput = document.getElementById("itemSearch");
   const box = document.getElementById("suggestions");
 
-  if (!box) return;
+  if (!searchInput || !box) return;
 
+  const search = searchInput.value.toLowerCase();
   box.innerHTML = "";
 
   globalInventory
