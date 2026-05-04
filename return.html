@@ -1,26 +1,37 @@
-async function returnItem() {
-  const name = document.getElementById("name").value;
-  const selected = document.getElementById("selectedItem").value;
-  const search = document.getElementById("itemSearch").value;
-  const qty = parseInt(document.getElementById("qty").value);
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Return</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  const item = selected || search; // 🔥 fallback
+  <style>
+    body { font-family: Arial; background: #f4f7f6; padding: 40px; text-align:center; }
+    .card { max-width: 420px; margin:auto; background:white; padding:30px; border-radius:12px; }
 
-  if (!name || !item || !qty) {
-    alert("Fill all fields properly");
-    return;
-  }
+    input { width:100%; padding:12px; margin:10px 0; }
 
-  await fetch(API_URL, {
-    method: "POST",
-    body: JSON.stringify({
-      name,
-      item,
-      qty,
-      change: qty,
-      action: "returned"
-    })
-  });
+    .suggestions { border:1px solid #ccc; max-height:150px; overflow-y:auto; }
+    .suggestions div { padding:10px; cursor:pointer; }
+    .suggestions div:hover { background:#eee; }
 
-  alert("Return successful");
-}
+    button { width:100%; padding:14px; background:#3498db; color:white; border:none; }
+  </style>
+</head>
+
+<body>
+
+<div class="card">
+  <h2>Return</h2>
+
+  <input id="name" placeholder="Your Name">
+  <input id="itemSearch" placeholder="Search item..." oninput="showSuggestions()">
+  <div id="suggestions" class="suggestions"></div>
+  <input id="qty" type="number" placeholder="Quantity">
+
+  <button onclick="returnItem()">Submit</button>
+</div>
+
+<script src="app.js"></script>
+
+</body>
+</html>
