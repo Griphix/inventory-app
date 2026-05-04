@@ -5,87 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
-    body {
-      font-family: Arial;
-      background: #eef2f3;
-      padding: 20px;
-    }
+    body { font-family: Arial; background: #eef2f3; padding: 20px; }
+    .container { max-width: 900px; margin: auto; }
+    h1 { text-align: center; }
 
-    .container {
-      max-width: 900px;
-      margin: auto;
-    }
+    .stats { display: flex; gap: 10px; margin-bottom: 20px; }
+    .stat { flex: 1; background: white; padding: 15px; border-radius: 10px; text-align: center; }
 
-    h1 {
-      text-align: center;
-    }
+    .controls { display: flex; gap: 10px; margin-bottom: 20px; }
+    input, select { padding: 10px; flex: 1; }
 
-    .stats {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
+    .card { background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; }
 
-    .stat {
-      flex: 1;
-      background: white;
-      padding: 15px;
-      border-radius: 10px;
-      text-align: center;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.08);
-    }
+    .stock-item { display: flex; justify-content: space-between; padding: 10px; }
+    .low { color: red; font-weight: bold; }
 
-    .alert {
-      background: #ffe5e5;
-      color: red;
-      padding: 10px;
-      border-radius: 8px;
-      margin-bottom: 15px;
-      display: none;
-    }
-
-    .controls {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    input, select {
-      padding: 10px;
-      flex: 1;
-    }
-
-    .card {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-    }
-
-    .stock-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px;
-      border-bottom: 1px solid #eee;
-    }
-
-    .low {
-      color: red;
-      font-weight: bold;
-    }
-
-    button {
-      padding: 12px;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-      margin: 5px;
-    }
-
+    button { padding: 12px; margin: 5px; border-radius: 8px; border: none; }
     .withdraw { background: #27ae60; color: white; }
     .return { background: #3498db; color: white; }
-
   </style>
 </head>
 
@@ -95,40 +32,26 @@
 
 <h1>Inventory Dashboard</h1>
 
-<!-- STATS -->
 <div class="stats">
-  <div class="stat">
-    <div id="totalItems">0</div>
-    <small>Items</small>
-  </div>
-  <div class="stat">
-    <div id="totalQty">0</div>
-    <small>Total Qty</small>
-  </div>
-  <div class="stat">
-    <div id="lowCount">0</div>
-    <small>Low Stock</small>
-  </div>
+  <div class="stat"><div id="totalItems">0</div><small>Items</small></div>
+  <div class="stat"><div id="totalQty">0</div><small>Total Qty</small></div>
+  <div class="stat"><div id="lowCount">0</div><small>Low Stock</small></div>
 </div>
 
-<!-- ALERT -->
-<div id="alertBox" class="alert"></div>
-
-<!-- SEARCH + FILTER -->
 <div class="controls">
-  <input id="search" placeholder="Search item..." oninput="filterItems()">
+  <input id="search" placeholder="Search..." oninput="filterItems()">
   <select id="categoryFilter" onchange="filterItems()">
     <option value="">All Categories</option>
   </select>
 </div>
 
 <div class="card">
-  <h3>📦 Stock</h3>
+  <h3>Stock</h3>
   <div id="inventoryList"></div>
 </div>
 
 <div class="card">
-  <h3>🧾 Recent Activity</h3>
+  <h3>Recent Activity</h3>
   <ul id="logList"></ul>
 </div>
 
