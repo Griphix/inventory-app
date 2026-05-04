@@ -1,86 +1,3 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Return Item</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <style>
-    body {
-      font-family: Arial;
-      background: #eef2f3;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-
-    .box {
-      background: white;
-      padding: 25px;
-      border-radius: 12px;
-      width: 320px;
-    }
-
-    h2 { text-align: center; }
-
-    input, select, button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
-
-    button {
-      background: #3498db;
-      color: white;
-      border: none;
-    }
-  </style>
-</head>
-
-<body>
-
-<div class="box">
-  <h2>Return</h2>
-
-  <input id="name" placeholder="Your Name">
-
-  <select id="itemSelect">
-    <option>Loading items...</option>
-  </select>
-
-  <input id="qty" type="number" placeholder="Quantity">
-
-  <button onclick="submitReturn()">Submit</button>
-</div>
-
-<script>
-const API_URL = "https://script.google.com/macros/s/AKfycbwEOfunJbNCn2ZUoEc9rDxuWYOuhSseDCUcgw_kr0qFOHUdPAtiPzx1xEB9BL4Xpu_y/exec";
-
-// LOAD ITEMS INTO DROPDOWN
-async function loadItems() {
-  try {
-    const res = await fetch(API_URL);
-    const data = await res.json();
-
-    const select = document.getElementById("itemSelect");
-    select.innerHTML = "";
-
-    data.inventory.forEach(i => {
-      const opt = document.createElement("option");
-      opt.value = i.name;
-      opt.textContent = `${i.name} (${i.qty})`;
-      select.appendChild(opt);
-    });
-
-  } catch (err) {
-    console.error(err);
-    alert("Cannot load data");
-  }
-}
-
-// SUBMIT RETURN
 async function submitReturn() {
   const name = document.getElementById("name").value;
   const item = document.getElementById("itemSelect").value;
@@ -91,16 +8,10 @@ async function submitReturn() {
     return;
   }
 
+  const url = `${API_URL}?action=return&name=${encodeURIComponent(name)}&item=${encodeURIComponent(item)}&qty=${qty}`;
+
   try {
-    await fetch(API_URL, {
-      method: "POST",
-      body: JSON.stringify({
-        action: "return",
-        name,
-        item,
-        qty
-      })
-    });
+    await fetch(url);
 
     alert("Returned successfully!");
     location.href = "index.html";
@@ -110,9 +21,3 @@ async function submitReturn() {
     alert("Error submitting return");
   }
 }
-
-window.onload = loadItems;
-</script>
-
-</body>
-</html>
