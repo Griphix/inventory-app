@@ -32,14 +32,14 @@
     label {
       font-size: 13px;
       color: #666;
-      margin-top: 10px;
+      margin-top: 12px;
       display: block;
     }
 
     input, select {
       width: 100%;
       padding: 12px;
-      margin-top: 5px;
+      margin-top: 6px;
       border-radius: 10px;
       border: 1px solid #ddd;
       font-size: 14px;
@@ -67,14 +67,6 @@
     button:hover {
       background: #219150;
     }
-
-    .back {
-      text-align: center;
-      margin-top: 15px;
-      font-size: 13px;
-      color: #888;
-      cursor: pointer;
-    }
   </style>
 </head>
 
@@ -84,50 +76,62 @@
   <h2>Withdraw Item</h2>
 
   <label>Your Name</label>
-  <input id="name" placeholder="e.g. Haneef">
+  <input id="name">
 
   <label>Select Item</label>
   <select id="itemSelect"></select>
 
   <label>Quantity</label>
-  <input id="qty" type="number" placeholder="e.g. 2">
+  <input id="qty" type="number">
 
   <button onclick="submitWithdraw()">Withdraw</button>
-
-  <div class="back" onclick="location.href='index.html'">← Back to dashboard</div>
 </div>
 
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbwEOfunJbNCn2ZUoEc9rDxuWYOuhSseDCUcgw_kr0qFOHUdPAtiPzx1xEB9BL4Xpu_y/exec";
 
 async function loadItems() {
-  const res = await fetch(API_URL);
-  const data = await res.json();
+  try {
+    const res = await fetch(API_URL);
+    const data = await res.json();
 
-  const select = document.getElementById("itemSelect");
-  select.innerHTML = "";
+    const select = document.getElementById("itemSelect");
+    select.innerHTML = "";
 
-  data.inventory.forEach(i => {
-    const opt = document.createElement("option");
-    opt.value = i.name;
-    opt.textContent = `${i.name} (${i.qty})`;
-    select.appendChild(opt);
-  });
+    data.inventory.forEach(i => {
+      const opt = document.createElement("option");
+      opt.value = i.name;
+      opt.textContent = `${i.name} (${i.qty})`;
+      select.appendChild(opt);
+    });
+
+  } catch (err) {
+    alert("Failed to load items");
+  }
 }
 
 async function submitWithdraw() {
-  const name = document.getElementById("name").value;
+  const name = document.getElementById("name").value.trim();
   const item = document.getElementById("itemSelect").value;
   const qty = document.getElementById("qty").value;
 
-  if (!name || !item || !qty) return alert("Fill all fields");
+  if (!name || !item || !qty) {
+    alert("Fill all fields");
+    return;
+  }
 
   const url = `${API_URL}?action=withdraw&name=${encodeURIComponent(name)}&item=${encodeURIComponent(item)}&qty=${qty}`;
 
-  await fetch(url);
+  try {
+    await fetch(url);
+    alert("Withdraw successful!");
 
-  alert("Withdraw successful!");
-  location.href = "index.html";
+    // 🔥 Force correct redirect (prevents weird jumping)
+    window.location.href = "./index.html";
+
+  } catch (err) {
+    alert("Error submitting withdraw");
+  }
 }
 
 window.onload = loadItems;
