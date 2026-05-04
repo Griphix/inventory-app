@@ -11,7 +11,6 @@ async function loadData() {
     globalInventory = data.inventory || [];
     globalLogs = data.logs || [];
 
-    updateStats();
     populateCategories();
     renderInventory(globalInventory);
     renderLogs(globalLogs);
@@ -20,24 +19,6 @@ async function loadData() {
     console.error(err);
     alert("Cannot load data");
   }
-}
-
-function updateStats() {
-  document.getElementById("totalItems").textContent = globalInventory.length;
-
-  let total = 0;
-  globalInventory.forEach(i => {
-    const num = parseInt(i.qty);
-    if (!isNaN(num)) total += num;
-  });
-
-  document.getElementById("totalQty").textContent = total;
-
-  document.getElementById("lowCount").textContent =
-    globalInventory.filter(i => {
-      const num = parseInt(i.qty);
-      return !isNaN(num) && num <= 3;
-    }).length;
 }
 
 function populateCategories() {
@@ -71,11 +52,9 @@ function renderInventory(list) {
     const qty = isNaN(parseInt(i.qty)) ? 0 : parseInt(i.qty);
 
     const div = document.createElement("div");
+    div.className = "item";
 
-    if (qty <= 3) {
-      div.style.color = "red";
-      div.style.fontWeight = "bold";
-    }
+    if (qty <= 3) div.classList.add("low");
 
     div.innerHTML = `${i.name} (${i.category}) — ${qty}`;
     el.appendChild(div);
