@@ -22,7 +22,6 @@ async function loadData() {
   }
 }
 
-// ===== STATS FIXED =====
 function updateStats() {
   document.getElementById("totalItems").textContent = globalInventory.length;
 
@@ -41,7 +40,6 @@ function updateStats() {
     }).length;
 }
 
-// ===== CATEGORY =====
 function populateCategories() {
   const select = document.getElementById("categoryFilter");
   select.innerHTML = `<option value="">All Categories</option>`;
@@ -58,22 +56,21 @@ function populateCategories() {
 
 function filterItems() {
   const cat = document.getElementById("categoryFilter").value;
-  let list = globalInventory;
 
+  let list = globalInventory;
   if (cat) list = list.filter(i => i.category === cat);
 
   renderInventory(list);
 }
 
-// ===== INVENTORY =====
 function renderInventory(list) {
   const el = document.getElementById("inventoryList");
   el.innerHTML = "";
 
   list.forEach(i => {
-    const div = document.createElement("div");
-
     const qty = isNaN(parseInt(i.qty)) ? 0 : parseInt(i.qty);
+
+    const div = document.createElement("div");
 
     if (qty <= 3) {
       div.style.color = "red";
@@ -85,7 +82,6 @@ function renderInventory(list) {
   });
 }
 
-// ===== LOGS =====
 function renderLogs(logs) {
   const el = document.getElementById("logList");
   el.innerHTML = "";
