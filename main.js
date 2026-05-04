@@ -56,8 +56,8 @@ function populateCategories() {
 
 function filterItems() {
   const cat = document.getElementById("categoryFilter").value;
-
   let list = globalInventory;
+
   if (cat) list = list.filter(i => i.category === cat);
 
   renderInventory(list);
