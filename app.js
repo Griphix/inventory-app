@@ -4,20 +4,24 @@ let globalInventory = [];
 let globalLogs = [];
 
 // ==========================
-// LOAD DATA (SAFE)
+// LOAD DATA (FLEXIBLE PARSER)
 // ==========================
 async function loadData() {
   try {
     const res = await fetch(API_URL);
-
-    if (!res.ok) {
-      throw new Error("Network response not ok");
-    }
-
     const data = await res.json();
 
-    globalInventory = data.inventory || [];
-    globalLogs = data.logs || [];
+    console.log("RAW DATA:", data); // 🔥 helps debug
+
+    // 🔥 Handle multiple possible formats
+    if (Array.isArray(data)) {
+      // old format (flat array)
+      globalInventory = data;
+      globalLogs = [];
+    } else {
+      globalInventory = data.inventory || data.data || [];
+      globalLogs = data.logs || [];
+    }
 
     populateCategories();
     updateStats();
@@ -26,12 +30,12 @@ async function loadData() {
 
   } catch (err) {
     console.error("LOAD ERROR:", err);
-    alert("⚠️ Cannot connect to inventory system.\nCheck Apps Script deployment.");
+    alert("Cannot load data from sheet");
   }
 }
 
 // ==========================
-// CATEGORY DROPDOWN
+// CATEGORY
 // ==========================
 function populateCategories() {
   const select = document.getElementById("categoryFilter");
@@ -39,7 +43,7 @@ function populateCategories() {
 
   select.innerHTML = `<option value="">All Categories</option>`;
 
-  const categories = [...new Set(globalInventory.map(i => i.category))];
+  const categories = [...new Set(globalInventory.map(i => i.category || "General"))];
 
   categories.forEach(c => {
     const opt = document.createElement("option");
@@ -56,10 +60,10 @@ function updateStats() {
   document.getElementById("totalItems")?.textContent = globalInventory.length;
 
   document.getElementById("totalQty")?.textContent =
-    globalInventory.reduce((s, i) => s + i.qty, 0);
+    globalInventory.reduce((s,i)=>s + Number(i.qty || i.quantity || 0), 0);
 
   document.getElementById("lowCount")?.textContent =
-    globalInventory.filter(i => i.qty <= 3).length;
+    globalInventory.filter(i => (i.qty || i.quantity || 0) <= 3).length;
 }
 
 // ==========================
@@ -70,10 +74,10 @@ function filterItems() {
   const cat = document.getElementById("categoryFilter")?.value;
 
   let list = globalInventory.filter(i =>
-    i.name.toLowerCase().includes(search)
+    (i.name || "").toLowerCase().includes(search)
   );
 
-  if (cat) list = list.filter(i => i.category === cat);
+  if (cat) list = list.filter(i => (i.category || "General") === cat);
 
   renderInventory(list);
 }
@@ -87,17 +91,16 @@ function renderInventory(list) {
 
   el.innerHTML = "";
 
-  list.sort((a, b) => a.qty - b.qty);
-
   list.forEach(i => {
+    const qty = Number(i.qty || i.quantity || 0);
+
     const div = document.createElement("div");
     div.className = "stock-item";
-
-    if (i.qty <= 3) div.classList.add("low");
+    if (qty <= 3) div.classList.add("low");
 
     div.innerHTML = `
-      <span>${i.name} (${i.category})</span>
-      <span>${i.qty}</span>
+      <span>${i.name} (${i.category || "General"})</span>
+      <span>${qty}</span>
     `;
 
     el.appendChild(div);
@@ -121,7 +124,7 @@ function renderLogs(logs) {
 }
 
 // ==========================
-// SEARCH SUGGESTIONS
+// SUGGESTIONS (FIXED CLICK)
 // ==========================
 function showSuggestions() {
   const input = document.getElementById("itemSearch");
@@ -133,10 +136,12 @@ function showSuggestions() {
   box.innerHTML = "";
 
   globalInventory
-    .filter(i => i.name.toLowerCase().includes(search))
+    .filter(i => (i.name || "").toLowerCase().includes(search))
     .forEach(i => {
+      const qty = Number(i.qty || i.quantity || 0);
+
       const div = document.createElement("div");
-      div.textContent = `${i.name} (${i.qty})`;
+      div.textContent = `${i.name} (${qty})`;
 
       div.onclick = () => {
         input.value = i.name;
@@ -151,67 +156,36 @@ function showSuggestions() {
 // WITHDRAW
 // ==========================
 async function withdraw() {
-  try {
-    const name = document.getElementById("name").value;
-    const item = document.getElementById("itemSearch").value;
-    const qty = parseInt(document.getElementById("qty").value);
+  const name = document.getElementById("name").value;
+  const item = document.getElementById("itemSearch").value;
+  const qty = parseInt(document.getElementById("qty").value);
 
-    if (!name || !item || !qty) {
-      alert("Fill all fields properly");
-      return;
-    }
+  if (!name || !item || !qty) return alert("Fill properly");
 
-    await fetch(API_URL, {
-      method: "POST",
-      body: JSON.stringify({
-        name,
-        item,
-        qty,
-        change: -qty,
-        action: "withdrew"
-      })
-    });
+  await fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({ name, item, qty, change: -qty, action: "withdrew" })
+  });
 
-    alert("Withdraw successful");
-
-  } catch (err) {
-    console.error("Withdraw error:", err);
-    alert("❌ Withdraw failed");
-  }
+  alert("Done");
 }
 
 // ==========================
 // RETURN
 // ==========================
 async function returnItem() {
-  try {
-    const name = document.getElementById("name").value;
-    const item = document.getElementById("itemSearch").value;
-    const qty = parseInt(document.getElementById("qty").value);
+  const name = document.getElementById("name").value;
+  const item = document.getElementById("itemSearch").value;
+  const qty = parseInt(document.getElementById("qty").value);
 
-    if (!name || !item || !qty) {
-      alert("Fill all fields properly");
-      return;
-    }
+  if (!name || !item || !qty) return alert("Fill properly");
 
-    await fetch(API_URL, {
-      method: "POST",
-      body: JSON.stringify({
-        name,
-        item,
-        qty,
-        change: qty,
-        action: "returned"
-      })
-    });
+  await fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({ name, item, qty, change: qty, action: "returned" })
+  });
 
-    alert("Return successful");
-
-  } catch (err) {
-    console.error("Return error:", err);
-    alert("❌ Return failed");
-  }
+  alert("Done");
 }
 
-// ==========================
 window.onload = loadData;
