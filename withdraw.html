@@ -1,80 +1,119 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Withdraw</title>
+  <title>Withdraw Item</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
-    body { font-family: Arial; background: #f4f7f6; padding: 40px; text-align:center; }
-
-    .card {
-      max-width: 420px;
-      margin:auto;
-      background:white;
-      padding:30px;
-      border-radius:12px;
-      box-shadow:0 4px 12px rgba(0,0,0,0.1);
-      position: relative;
+    body {
+      font-family: Arial;
+      background: #eef2f3;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
 
-    input {
-      width:100%;
-      padding:12px;
-      margin:10px 0;
-      border-radius:8px;
-      border:1px solid #ccc;
-    }
-
-    .suggestions {
-      position: absolute;
-      width: calc(100% - 60px);
+    .box {
       background: white;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      max-height: 150px;
-      overflow-y: auto;
-      z-index: 9999;
+      padding: 25px;
+      border-radius: 12px;
+      width: 320px;
     }
 
-    .suggestions div {
+    h2 { text-align: center; }
+
+    input, select, button {
+      width: 100%;
       padding: 10px;
-      cursor: pointer;
-    }
-
-    .suggestions div:hover {
-      background: #eee;
+      margin-top: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
     }
 
     button {
-      width:100%;
-      padding:14px;
-      background:#27ae60;
-      color:white;
-      border:none;
-      border-radius:10px;
+      background: #27ae60;
+      color: white;
+      border: none;
+      cursor: pointer;
     }
   </style>
 </head>
 
 <body>
 
-<div class="card">
+<div class="box">
+  <h2>Withdraw</h2>
 
-<h2>Withdraw</h2>
+  <input id="name" placeholder="Your Name">
 
-<input id="name" placeholder="Your Name">
+  <select id="itemSelect">
+    <option>Loading items...</option>
+  </select>
 
-<input id="itemSearch" placeholder="Search item..." oninput="showSuggestions()">
+  <input id="qty" type="number" placeholder="Quantity">
 
-<div id="suggestions" class="suggestions"></div>
-
-<input id="qty" type="number" placeholder="Quantity">
-
-<button onclick="withdraw()">Submit</button>
-
+  <button onclick="submitWithdraw()">Submit</button>
 </div>
 
-<script src="main.js"></script>
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbwEOfunJbNCn2ZUoEc9rDxuWYOuhSseDCUcgw_kr0qFOHUdPAtiPzx1xEB9BL4Xpu_y/exec";
+
+// LOAD ITEMS
+async function loadItems() {
+  try {
+    const res = await fetch(API_URL);
+    const data = await res.json();
+
+    const select = document.getElementById("itemSelect");
+    select.innerHTML = "";
+
+    data.inventory.forEach(i => {
+      const opt = document.createElement("option");
+      opt.value = i.name;
+      opt.textContent = `${i.name} (${i.qty})`;
+      select.appendChild(opt);
+    });
+
+  } catch (err) {
+    console.error(err);
+    alert("Cannot load data");
+  }
+}
+
+// SUBMIT WITHDRAW
+async function submitWithdraw() {
+  const name = document.getElementById("name").value;
+  const item = document.getElementById("itemSelect").value;
+  const qty = parseInt(document.getElementById("qty").value);
+
+  if (!name || !item || !qty) {
+    alert("Fill all fields");
+    return;
+  }
+
+  try {
+    await fetch(API_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        action: "withdraw",
+        name,
+        item,
+        qty
+      })
+    });
+
+    alert("Withdraw successful!");
+    location.href = "index.html";
+
+  } catch (err) {
+    console.error(err);
+    alert("Error submitting withdraw");
+  }
+}
+
+window.onload = loadItems;
+</script>
 
 </body>
 </html>
