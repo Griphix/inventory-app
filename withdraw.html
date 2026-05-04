@@ -1,23 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Withdraw</title>
+</head>
+<body>
+
+<h2>Withdraw</h2>
+
+<input id="name" placeholder="Your Name"><br><br>
+
+<select id="itemSelect"></select><br><br>
+
+<input id="qty" type="number" placeholder="Quantity"><br><br>
+
+<button onclick="submitWithdraw()">Submit</button>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbwEOfunJbNCn2ZUoEc9rDxuWYOuhSseDCUcgw_kr0qFOHUdPAtiPzx1xEB9BL4Xpu_y/exec";
+
+async function loadItems() {
+  const res = await fetch(API_URL);
+  const data = await res.json();
+
+  const select = document.getElementById("itemSelect");
+  select.innerHTML = "";
+
+  data.inventory.forEach(i => {
+    const opt = document.createElement("option");
+    opt.value = i.name;
+    opt.textContent = `${i.name} (${i.qty})`;
+    select.appendChild(opt);
+  });
+}
+
 async function submitWithdraw() {
   const name = document.getElementById("name").value;
   const item = document.getElementById("itemSelect").value;
   const qty = document.getElementById("qty").value;
 
-  if (!name || !item || !qty) {
-    alert("Fill all fields");
-    return;
-  }
-
   const url = `${API_URL}?action=withdraw&name=${encodeURIComponent(name)}&item=${encodeURIComponent(item)}&qty=${qty}`;
 
-  try {
-    await fetch(url);
+  await fetch(url);
 
-    alert("Withdraw successful!");
-    location.href = "index.html";
-
-  } catch (err) {
-    console.error(err);
-    alert("Error submitting withdraw");
-  }
+  alert("Withdraw successful!");
+  location.href = "index.html";
 }
+
+window.onload = loadItems;
+</script>
+
+</body>
+</html>
