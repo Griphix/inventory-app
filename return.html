@@ -67,14 +67,6 @@
     button:hover {
       background: #2c80b4;
     }
-
-    .back {
-      text-align: center;
-      margin-top: 15px;
-      font-size: 13px;
-      color: #888;
-      cursor: pointer;
-    }
   </style>
 </head>
 
@@ -84,17 +76,15 @@
   <h2>Return Item</h2>
 
   <label>Your Name</label>
-  <input id="name" placeholder="e.g. Haneef">
+  <input id="name">
 
   <label>Select Item</label>
   <select id="itemSelect"></select>
 
   <label>Quantity</label>
-  <input id="qty" type="number" placeholder="e.g. 2">
+  <input id="qty" type="number">
 
   <button onclick="submitReturn()">Return</button>
-
-  <div class="back" onclick="location.href='index.html'">← Back to dashboard</div>
 </div>
 
 <script>
