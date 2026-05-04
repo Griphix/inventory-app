@@ -1,91 +1,26 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Return</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+async function returnItem() {
+  const name = document.getElementById("name").value;
+  const selected = document.getElementById("selectedItem").value;
+  const search = document.getElementById("itemSearch").value;
+  const qty = parseInt(document.getElementById("qty").value);
 
-  <style>
-    body {
-      font-family: Arial;
-      background: #f4f7f6;
-      padding: 40px;
-      text-align: center;
-    }
+  const item = selected || search; // 🔥 fallback
 
-    .card {
-      max-width: 420px;
-      margin: auto;
-      background: white;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
+  if (!name || !item || !qty) {
+    alert("Fill all fields properly");
+    return;
+  }
 
-    h1 {
-      margin-bottom: 20px;
-    }
+  await fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      name,
+      item,
+      qty,
+      change: qty,
+      action: "returned"
+    })
+  });
 
-    input {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 16px;
-    }
-
-    .suggestions {
-      text-align: left;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      max-height: 150px;
-      overflow-y: auto;
-      margin-top: -8px;
-      margin-bottom: 10px;
-    }
-
-    .suggestions div {
-      padding: 10px;
-      cursor: pointer;
-    }
-
-    .suggestions div:hover {
-      background: #eee;
-    }
-
-    button {
-      width: 100%;
-      padding: 14px;
-      margin-top: 15px;
-      border: none;
-      border-radius: 10px;
-      background: #3498db;
-      color: white;
-      font-size: 18px;
-      cursor: pointer;
-    }
-  </style>
-</head>
-
-<body>
-
-<div class="card">
-  <h1>Return Item</h1>
-
-  <input id="name" placeholder="Your Name">
-
-  <input id="itemSearch" placeholder="Search item..." oninput="showSuggestions()">
-
-  <div id="suggestions" class="suggestions"></div>
-
-  <input id="selectedItem" placeholder="Selected item" readonly>
-
-  <input id="qty" type="number" placeholder="Quantity">
-
-  <button onclick="returnItem()">Submit</button>
-</div>
-
-<script src="app.js"></script>
-
-</body>
-</html>
+  alert("Return successful");
+}
