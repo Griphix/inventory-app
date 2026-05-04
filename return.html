@@ -5,42 +5,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
-    body {
-      font-family: Arial;
-      background: #f4f7f6;
-      padding: 40px;
-      text-align: center;
-    }
+    body { font-family: Arial; background: #f4f7f6; padding: 40px; text-align:center; }
 
     .card {
       max-width: 420px;
-      margin: auto;
-      background: white;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-
-    h2 {
-      margin-bottom: 20px;
+      margin:auto;
+      background:white;
+      padding:30px;
+      border-radius:12px;
+      box-shadow:0 4px 12px rgba(0,0,0,0.1);
+      position: relative;
     }
 
     input {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 16px;
+      width:100%;
+      padding:12px;
+      margin:10px 0;
+      border-radius:8px;
+      border:1px solid #ccc;
     }
 
     .suggestions {
-      text-align: left;
+      position: absolute;
+      width: calc(100% - 60px);
+      background: white;
       border: 1px solid #ccc;
       border-radius: 8px;
       max-height: 150px;
       overflow-y: auto;
-      margin-bottom: 10px;
+      z-index: 9999;
     }
 
     .suggestions div {
@@ -53,19 +46,12 @@
     }
 
     button {
-      width: 100%;
-      padding: 14px;
-      margin-top: 15px;
-      border: none;
-      border-radius: 10px;
-      background: #3498db;
-      color: white;
-      font-size: 18px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: #2c80b4;
+      width:100%;
+      padding:14px;
+      background:#3498db;
+      color:white;
+      border:none;
+      border-radius:10px;
     }
   </style>
 </head>
@@ -73,17 +59,19 @@
 <body>
 
 <div class="card">
-  <h2>Return</h2>
 
-  <input id="name" placeholder="Your Name">
+<h2>Return</h2>
 
-  <input id="itemSearch" placeholder="Search item..." oninput="showSuggestions()">
+<input id="name" placeholder="Your Name">
 
-  <div id="suggestions" class="suggestions"></div>
+<input id="itemSearch" placeholder="Search item..." oninput="showSuggestions()">
 
-  <input id="qty" type="number" placeholder="Quantity">
+<div id="suggestions" class="suggestions"></div>
 
-  <button onclick="returnItem()">Submit</button>
+<input id="qty" type="number" placeholder="Quantity">
+
+<button onclick="returnItem()">Submit</button>
+
 </div>
 
 <script src="app.js"></script>
