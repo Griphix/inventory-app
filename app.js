@@ -16,7 +16,6 @@ async function loadData() {
 
     populateCategories();
     updateStats();
-
     renderInventory(globalInventory);
     renderLogs(globalLogs);
 
@@ -49,8 +48,10 @@ function populateCategories() {
 // ==========================
 function updateStats() {
   document.getElementById("totalItems")?.textContent = globalInventory.length;
-  document.getElementById("totalQty")?.textContent = globalInventory.reduce((s,i)=>s+i.qty,0);
-  document.getElementById("lowCount")?.textContent = globalInventory.filter(i=>i.qty<=3).length;
+  document.getElementById("totalQty")?.textContent =
+    globalInventory.reduce((s, i) => s + i.qty, 0);
+  document.getElementById("lowCount")?.textContent =
+    globalInventory.filter(i => i.qty <= 3).length;
 }
 
 // ==========================
@@ -60,7 +61,10 @@ function filterItems() {
   const search = document.getElementById("search")?.value.toLowerCase() || "";
   const cat = document.getElementById("categoryFilter")?.value;
 
-  let list = globalInventory.filter(i => i.name.toLowerCase().includes(search));
+  let list = globalInventory.filter(i =>
+    i.name.toLowerCase().includes(search)
+  );
+
   if (cat) list = list.filter(i => i.category === cat);
 
   renderInventory(list);
@@ -75,12 +79,13 @@ function renderInventory(list) {
 
   el.innerHTML = "";
 
-  list.sort((a,b)=>a.qty-b.qty);
+  list.sort((a, b) => a.qty - b.qty);
 
-  list.forEach(i=>{
+  list.forEach(i => {
     const div = document.createElement("div");
     div.className = "stock-item";
-    if (i.qty<=3) div.classList.add("low");
+
+    if (i.qty <= 3) div.classList.add("low");
 
     div.innerHTML = `
       <span>${i.name} (${i.category})</span>
@@ -98,11 +103,11 @@ function renderLogs(logs) {
   const el = document.getElementById("logList");
   if (!el) return;
 
-  el.innerHTML="";
+  el.innerHTML = "";
 
-  logs.slice(-10).reverse().forEach(l=>{
-    const li=document.createElement("li");
-    li.textContent=`${l.name} ${l.action} ${l.qty} ${l.item}`;
+  logs.slice(-10).reverse().forEach(l => {
+    const li = document.createElement("li");
+    li.textContent = `${l.name} ${l.action} ${l.qty} ${l.item}`;
     el.appendChild(li);
   });
 }
@@ -111,23 +116,23 @@ function renderLogs(logs) {
 // SEARCH SUGGESTIONS
 // ==========================
 function showSuggestions() {
-  const input=document.getElementById("itemSearch");
-  const box=document.getElementById("suggestions");
+  const input = document.getElementById("itemSearch");
+  const box = document.getElementById("suggestions");
 
   if (!input || !box) return;
 
-  const search=input.value.toLowerCase();
-  box.innerHTML="";
+  const search = input.value.toLowerCase();
+  box.innerHTML = "";
 
   globalInventory
-    .filter(i=>i.name.toLowerCase().includes(search))
-    .forEach(i=>{
-      const div=document.createElement("div");
-      div.textContent=`${i.name} (${i.qty})`;
+    .filter(i => i.name.toLowerCase().includes(search))
+    .forEach(i => {
+      const div = document.createElement("div");
+      div.textContent = `${i.name} (${i.qty})`;
 
-      div.onclick=()=>{
-        input.value=i.name;
-        box.innerHTML="";
+      div.onclick = () => {
+        input.value = i.name;
+        box.innerHTML = "";
       };
 
       box.appendChild(div);
@@ -135,48 +140,12 @@ function showSuggestions() {
 }
 
 // ==========================
-// WITHDRAW
-// ==========================
-async function withdraw() {
-  const name=document.getElementById("name").value.trim();
-  const itemInput=document.getElementById("itemSearch").value.trim();
-  const qty=parseInt(document.getElementById("qty").value);
-
-  if (!name || !itemInput || !qty) {
-    alert("Fill all fields properly");
-    return;
-  }
-
-  const match = globalInventory.find(i =>
-    i.name.toLowerCase() === itemInput.toLowerCase()
-  );
-
-  if (!match) {
-    alert("Item not found. Please select from suggestions.");
-    return;
-  }
-
-  await fetch(API_URL,{
-    method:"POST",
-    body:JSON.stringify({
-      name,
-      item: match.name,
-      qty,
-      change:-qty,
-      action:"withdrew"
-    })
-  });
-
-  alert("Withdraw successful");
-}
-
-// ==========================
-// RETURN
+// RETURN (FIXED)
 // ==========================
 async function returnItem() {
-  const name=document.getElementById("name").value.trim();
-  const itemInput=document.getElementById("itemSearch").value.trim();
-  const qty=parseInt(document.getElementById("qty").value);
+  const name = document.getElementById("name").value.trim();
+  const itemInput = document.getElementById("itemSearch").value.trim();
+  const qty = parseInt(document.getElementById("qty").value);
 
   if (!name || !itemInput || !qty) {
     alert("Fill all fields properly");
@@ -188,22 +157,26 @@ async function returnItem() {
   );
 
   if (!match) {
-    alert("Item not found. Please select from suggestions.");
+    alert("Please select a valid item from suggestions");
     return;
   }
 
-  await fetch(API_URL,{
-    method:"POST",
-    body:JSON.stringify({
+  await fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({
       name,
       item: match.name,
       qty,
       change: qty,
-      action:"returned"
+      action: "returned"
     })
   });
 
   alert("Return successful");
+
+  // 🔥 reset form
+  document.getElementById("itemSearch").value = "";
+  document.getElementById("qty").value = "";
 }
 
 // ==========================
