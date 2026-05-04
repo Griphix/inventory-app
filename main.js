@@ -3,51 +3,47 @@ const API_URL = "https://script.google.com/macros/s/AKfycbwEOfunJbNCn2ZUoEc9rDxu
 let globalInventory = [];
 let globalLogs = [];
 
-// ==========================
-// LOAD DATA
-// ==========================
 async function loadData() {
   try {
     const res = await fetch(API_URL);
     const data = await res.json();
 
-    console.log("DATA:", data);
-
     globalInventory = data.inventory || [];
     globalLogs = data.logs || [];
 
-    // 🔥 THIS WAS MISSING BEFORE
     updateStats();
     populateCategories();
     renderInventory(globalInventory);
     renderLogs(globalLogs);
 
   } catch (err) {
-    console.error("ERROR:", err);
+    console.error(err);
     alert("Cannot load data");
   }
 }
 
-// ==========================
-// STATS
-// ==========================
+// ===== STATS FIXED =====
 function updateStats() {
   document.getElementById("totalItems").textContent = globalInventory.length;
 
-  document.getElementById("totalQty").textContent =
-    globalInventory.reduce((sum, i) => sum + Number(i.qty), 0);
+  let total = 0;
+  globalInventory.forEach(i => {
+    const num = parseInt(i.qty);
+    if (!isNaN(num)) total += num;
+  });
+
+  document.getElementById("totalQty").textContent = total;
 
   document.getElementById("lowCount").textContent =
-    globalInventory.filter(i => i.qty <= 3).length;
+    globalInventory.filter(i => {
+      const num = parseInt(i.qty);
+      return !isNaN(num) && num <= 3;
+    }).length;
 }
 
-// ==========================
-// CATEGORY DROPDOWN
-// ==========================
+// ===== CATEGORY =====
 function populateCategories() {
   const select = document.getElementById("categoryFilter");
-  if (!select) return;
-
   select.innerHTML = `<option value="">All Categories</option>`;
 
   const categories = [...new Set(globalInventory.map(i => i.category))];
@@ -60,50 +56,38 @@ function populateCategories() {
   });
 }
 
-// ==========================
-// FILTER
-// ==========================
 function filterItems() {
   const cat = document.getElementById("categoryFilter").value;
-
   let list = globalInventory;
 
-  if (cat) {
-    list = list.filter(i => i.category === cat);
-  }
+  if (cat) list = list.filter(i => i.category === cat);
 
   renderInventory(list);
 }
 
-// ==========================
-// RENDER INVENTORY
-// ==========================
+// ===== INVENTORY =====
 function renderInventory(list) {
   const el = document.getElementById("inventoryList");
-  if (!el) return;
-
   el.innerHTML = "";
 
   list.forEach(i => {
     const div = document.createElement("div");
 
-    if (i.qty <= 3) {
+    const qty = isNaN(parseInt(i.qty)) ? 0 : parseInt(i.qty);
+
+    if (qty <= 3) {
       div.style.color = "red";
       div.style.fontWeight = "bold";
     }
 
-    div.innerHTML = `${i.name} (${i.category}) — ${i.qty}`;
+    div.innerHTML = `${i.name} (${i.category}) — ${qty}`;
     el.appendChild(div);
   });
 }
 
-// ==========================
-// LOGS
-// ==========================
+// ===== LOGS =====
 function renderLogs(logs) {
   const el = document.getElementById("logList");
-  if (!el) return;
-
   el.innerHTML = "";
 
   logs.slice(-10).reverse().forEach(l => {
@@ -113,5 +97,4 @@ function renderLogs(logs) {
   });
 }
 
-// ==========================
 window.onload = loadData;
