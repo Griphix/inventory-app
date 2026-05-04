@@ -5,23 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
-    body { font-family: Arial; background: #eef2f3; padding: 20px; }
-    .container { max-width: 900px; margin: auto; }
-
-    h1 { text-align: center; }
-
-    .stats {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
+    body {
+      font-family: Arial;
+      background: #eef2f3;
+      padding: 20px;
     }
 
-    .stat {
-      flex: 1;
-      background: white;
-      padding: 15px;
-      border-radius: 10px;
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    h1 {
       text-align: center;
+      margin-bottom: 20px;
     }
 
     select {
@@ -29,6 +26,7 @@
       padding: 10px;
       margin-bottom: 20px;
       border-radius: 8px;
+      border: 1px solid #ccc;
     }
 
     .card {
@@ -38,16 +36,31 @@
       margin-bottom: 20px;
     }
 
+    .item {
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .low {
+      color: red;
+      font-weight: bold;
+    }
+
     button {
       padding: 12px;
       margin: 5px;
       border-radius: 8px;
       border: none;
       cursor: pointer;
+      font-weight: bold;
     }
 
     .withdraw { background: #27ae60; color: white; }
     .return { background: #3498db; color: white; }
+
+    .actions {
+      text-align: center;
+    }
   </style>
 </head>
 
@@ -56,12 +69,6 @@
 <div class="container">
 
 <h1>Inventory Dashboard</h1>
-
-<div class="stats">
-  <div class="stat"><div id="totalItems">0</div><small>Items</small></div>
-  <div class="stat"><div id="totalQty">0</div><small>Total Qty</small></div>
-  <div class="stat"><div id="lowCount">0</div><small>Low Stock</small></div>
-</div>
 
 <select id="categoryFilter" onchange="filterItems()">
   <option value="">All Categories</option>
@@ -77,7 +84,7 @@
   <ul id="logList"></ul>
 </div>
 
-<div style="text-align:center;">
+<div class="actions">
   <button class="withdraw" onclick="location.href='withdraw.html'">Withdraw</button>
   <button class="return" onclick="location.href='return.html'">Return</button>
 </div>
