@@ -6,66 +6,26 @@
 
   <style>
     body { font-family: Arial; background: #f4f7f6; padding: 40px; text-align:center; }
+    .card { max-width: 420px; margin:auto; background:white; padding:30px; border-radius:12px; }
 
-    .card {
-      max-width: 420px;
-      margin:auto;
-      background:white;
-      padding:30px;
-      border-radius:12px;
-      box-shadow:0 4px 12px rgba(0,0,0,0.1);
-    }
+    input { width:100%; padding:12px; margin:10px 0; }
 
-    input {
-      width:100%;
-      padding:12px;
-      margin:10px 0;
-      border-radius:8px;
-      border:1px solid #ccc;
-      font-size:16px;
-    }
+    .suggestions { border:1px solid #ccc; max-height:150px; overflow-y:auto; }
+    .suggestions div { padding:10px; cursor:pointer; }
+    .suggestions div:hover { background:#eee; }
 
-    .suggestions {
-      text-align:left;
-      border:1px solid #ccc;
-      border-radius:8px;
-      max-height:150px;
-      overflow-y:auto;
-    }
-
-    .suggestions div {
-      padding:10px;
-      cursor:pointer;
-    }
-
-    .suggestions div:hover {
-      background:#eee;
-    }
-
-    button {
-      width:100%;
-      padding:14px;
-      margin-top:15px;
-      border:none;
-      border-radius:10px;
-      background:#27ae60;
-      color:white;
-      font-size:18px;
-    }
+    button { width:100%; padding:14px; background:#27ae60; color:white; border:none; }
   </style>
 </head>
 
 <body>
 
 <div class="card">
-  <h1>Withdraw Item</h1>
+  <h2>Withdraw</h2>
 
   <input id="name" placeholder="Your Name">
-
   <input id="itemSearch" placeholder="Search item..." oninput="showSuggestions()">
-
   <div id="suggestions" class="suggestions"></div>
-
   <input id="qty" type="number" placeholder="Quantity">
 
   <button onclick="withdraw()">Submit</button>
