@@ -5,10 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
-    body { font-family: Arial; background: #eef2f3; padding: 20px; }
-    .container { max-width: 900px; margin: auto; }
+    body {
+      font-family: Arial;
+      background: #eef2f3;
+      padding: 20px;
+    }
 
-    h1 { text-align: center; }
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    h1 {
+      text-align: center;
+    }
 
     .stats {
       display: flex;
@@ -28,6 +38,8 @@
       width: 100%;
       padding: 10px;
       margin-bottom: 20px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
     }
 
     .card {
@@ -37,15 +49,33 @@
       margin-bottom: 20px;
     }
 
+    .stock-item {
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .low {
+      color: red;
+      font-weight: bold;
+    }
+
     button {
       padding: 12px;
       margin: 5px;
       border-radius: 8px;
       border: none;
+      cursor: pointer;
     }
 
-    .withdraw { background: #27ae60; color: white; }
-    .return { background: #3498db; color: white; }
+    .withdraw {
+      background: #27ae60;
+      color: white;
+    }
+
+    .return {
+      background: #3498db;
+      color: white;
+    }
   </style>
 </head>
 
@@ -53,33 +83,50 @@
 
 <div class="container">
 
-<h1>Inventory Dashboard</h1>
+  <h1>Inventory Dashboard</h1>
 
-<div class="stats">
-  <div class="stat"><div id="totalItems">0</div><small>Items</small></div>
-  <div class="stat"><div id="totalQty">0</div><small>Total Qty</small></div>
-  <div class="stat"><div id="lowCount">0</div><small>Low Stock</small></div>
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat">
+      <div id="totalItems">0</div>
+      <small>Items</small>
+    </div>
+    <div class="stat">
+      <div id="totalQty">0</div>
+      <small>Total Qty</small>
+    </div>
+    <div class="stat">
+      <div id="lowCount">0</div>
+      <small>Low Stock</small>
+    </div>
+  </div>
+
+  <!-- CATEGORY FILTER ONLY (NO SEARCH BAR) -->
+  <select id="categoryFilter" onchange="filterItems()">
+    <option value="">All Categories</option>
+  </select>
+
+  <!-- STOCK -->
+  <div class="card">
+    <h3>Stock</h3>
+    <div id="inventoryList"></div>
+  </div>
+
+  <!-- LOGS -->
+  <div class="card">
+    <h3>Recent Activity</h3>
+    <ul id="logList"></ul>
+  </div>
+
+  <!-- ACTIONS -->
+  <div style="text-align:center;">
+    <button class="withdraw" onclick="location.href='withdraw.html'">Withdraw</button>
+    <button class="return" onclick="location.href='return.html'">Return</button>
+  </div>
+
 </div>
 
-<select id="categoryFilter" onchange="filterItems()">
-  <option value="">All Categories</option>
-</select>
-
-<div class="card">
-  <h3>Stock</h3>
-  <div id="inventoryList"></div>
-</div>
-
-<div class="card">
-  <h3>Recent Activity</h3>
-  <ul id="logList"></ul>
-</div>
-
-<button class="withdraw" onclick="location.href='withdraw.html'">Withdraw</button>
-<button class="return" onclick="location.href='return.html'">Return</button>
-
-</div>
-
+<!-- IMPORTANT: ONLY THIS JS FILE -->
 <script src="main.js"></script>
 
 </body>
