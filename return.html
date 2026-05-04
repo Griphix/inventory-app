@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Return</title>
+  <title>Return Items</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
@@ -12,115 +12,124 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      min-height: 100vh;
     }
 
     .card {
       background: white;
-      padding: 30px 25px;
+      padding: 25px;
       border-radius: 16px;
-      width: 320px;
+      width: 360px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.08);
     }
 
     h2 {
       text-align: center;
-      margin-bottom: 25px;
-      color: #333;
+      margin-bottom: 20px;
     }
 
     label {
       font-size: 13px;
       color: #666;
-      margin-top: 10px;
-      display: block;
     }
 
     input, select {
       width: 100%;
-      padding: 12px;
+      padding: 10px;
       margin-top: 5px;
-      border-radius: 10px;
+      border-radius: 8px;
       border: 1px solid #ddd;
-      font-size: 14px;
     }
 
-    input:focus, select:focus {
-      outline: none;
-      border-color: #3498db;
+    .item-row {
+      border: 1px solid #eee;
+      padding: 10px;
+      border-radius: 10px;
+      margin-top: 10px;
     }
 
     button {
       width: 100%;
-      padding: 14px;
-      margin-top: 20px;
-      border-radius: 12px;
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 10px;
       border: none;
-      background: #3498db;
-      color: white;
       font-weight: bold;
-      font-size: 15px;
       cursor: pointer;
-      transition: 0.2s;
     }
 
-    button:hover {
-      background: #2c80b4;
-    }
+    .add { background: #f1c40f; }
+    .submit { background: #3498db; color: white; }
   </style>
 </head>
 
 <body>
 
 <div class="card">
-  <h2>Return Item</h2>
+  <h2>Return Items</h2>
 
-  <label>Your Name</label>
+  <label>Name</label>
   <input id="name">
 
-  <label>Select Item</label>
-  <select id="itemSelect"></select>
+  <div id="itemsContainer"></div>
 
-  <label>Quantity</label>
-  <input id="qty" type="number">
-
-  <button onclick="submitReturn()">Return</button>
+  <button class="add" onclick="addRow()">+ Add Item</button>
+  <button class="submit" onclick="submitAll()">Submit All</button>
 </div>
 
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbwEOfunJbNCn2ZUoEc9rDxuWYOuhSseDCUcgw_kr0qFOHUdPAtiPzx1xEB9BL4Xpu_y/exec";
 
+let inventory = [];
+
 async function loadItems() {
   const res = await fetch(API_URL);
   const data = await res.json();
+  inventory = data.inventory;
 
-  const select = document.getElementById("itemSelect");
-  select.innerHTML = "";
-
-  data.inventory.forEach(i => {
-    const opt = document.createElement("option");
-    opt.value = i.name;
-    opt.textContent = `${i.name} (${i.qty})`;
-    select.appendChild(opt);
-  });
+  addRow();
 }
 
-async function submitReturn() {
-  const name = document.getElementById("name").value;
-  const item = document.getElementById("itemSelect").value;
-  const qty = document.getElementById("qty").value;
+function addRow() {
+  const container = document.getElementById("itemsContainer");
 
-  if (!name || !item || !qty) {
-    alert("Fill all fields");
+  const div = document.createElement("div");
+  div.className = "item-row";
+
+  let options = inventory.map(i =>
+    `<option value="${i.name}">${i.name} (${i.qty})</option>`
+  ).join("");
+
+  div.innerHTML = `
+    <select class="item">${options}</select>
+    <input type="number" class="qty" placeholder="Quantity">
+  `;
+
+  container.appendChild(div);
+}
+
+async function submitAll() {
+  const name = document.getElementById("name").value;
+
+  if (!name) {
+    alert("Enter name");
     return;
   }
 
-  const url = `${API_URL}?action=return&name=${encodeURIComponent(name)}&item=${encodeURIComponent(item)}&qty=${qty}`;
+  const rows = document.querySelectorAll(".item-row");
 
-  await fetch(url);
+  for (let row of rows) {
+    const item = row.querySelector(".item").value;
+    const qty = row.querySelector(".qty").value;
 
-  alert("Return successful!");
-  location.href = "index.html";
+    if (!qty) continue;
+
+    const url = `${API_URL}?action=return&name=${encodeURIComponent(name)}&item=${encodeURIComponent(item)}&qty=${qty}`;
+    await fetch(url);
+  }
+
+  alert("All items returned!");
+  window.location.href = "index.html";
 }
 
 window.onload = loadItems;
