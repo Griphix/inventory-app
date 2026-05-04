@@ -1,16 +1,57 @@
 <!DOCTYPE html>
 <html>
+<head>
+  <title>Withdraw</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    body {
+      font-family: Arial;
+      background: #eef2f3;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .box {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      width: 320px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    h2 { text-align: center; }
+
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background: #27ae60;
+      color: white;
+      border: none;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
 <body>
 
-<h2>Withdraw</h2>
+<div class="box">
+  <h2>Withdraw Item</h2>
 
-<input id="name" placeholder="Your Name"><br><br>
+  <input id="name" placeholder="Your Name">
+  <select id="itemSelect"></select>
+  <input id="qty" type="number" placeholder="Quantity">
 
-<select id="itemSelect"></select><br><br>
-
-<input id="qty" type="number" placeholder="Quantity"><br><br>
-
-<button onclick="submitWithdraw()">Submit</button>
+  <button onclick="submitWithdraw()">Submit</button>
+</div>
 
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbwEOfunJbNCn2ZUoEc9rDxuWYOuhSseDCUcgw_kr0qFOHUdPAtiPzx1xEB9BL4Xpu_y/exec";
@@ -35,10 +76,7 @@ async function submitWithdraw() {
   const item = document.getElementById("itemSelect").value;
   const qty = document.getElementById("qty").value;
 
-  if (!name || !item || !qty) {
-    alert("Fill all fields");
-    return;
-  }
+  if (!name || !item || !qty) return alert("Fill all fields");
 
   const url = `${API_URL}?action=withdraw&name=${encodeURIComponent(name)}&item=${encodeURIComponent(item)}&qty=${qty}`;
 
