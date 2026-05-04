@@ -1,8 +1,5 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Return</title>
-</head>
 <body>
 
 <h2>Return</h2>
@@ -37,6 +34,11 @@ async function submitReturn() {
   const name = document.getElementById("name").value;
   const item = document.getElementById("itemSelect").value;
   const qty = document.getElementById("qty").value;
+
+  if (!name || !item || !qty) {
+    alert("Fill all fields");
+    return;
+  }
 
   const url = `${API_URL}?action=return&name=${encodeURIComponent(name)}&item=${encodeURIComponent(item)}&qty=${qty}`;
 
