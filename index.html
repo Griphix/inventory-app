@@ -7,6 +7,7 @@
   <style>
     body { font-family: Arial; background: #eef2f3; padding: 20px; }
     .container { max-width: 900px; margin: auto; }
+
     h1 { text-align: center; }
 
     .stats { display: flex; gap: 10px; margin-bottom: 20px; }
@@ -40,9 +41,7 @@
 
 <div class="controls">
   <input id="search" placeholder="Search..." oninput="filterItems()">
-  <select id="categoryFilter" onchange="filterItems()">
-    <option value="">All Categories</option>
-  </select>
+  <select id="categoryFilter" onchange="filterItems()"></select>
 </div>
 
 <div class="card">
