@@ -3,44 +3,59 @@ const API_URL = "https://script.google.com/macros/s/AKfycbwEOfunJbNCn2ZUoEc9rDxu
 let globalInventory = [];
 let globalLogs = [];
 
-// LOAD
+// ==========================
+// LOAD DATA
+// ==========================
 async function loadData() {
-  const res = await fetch(API_URL);
-  const data = await res.json();
+  try {
+    const res = await fetch(API_URL);
+    const data = await res.json();
 
-  globalInventory = data.inventory || [];
-  globalLogs = data.logs || [];
+    globalInventory = data.inventory || [];
+    globalLogs = data.logs || [];
 
-  populateCategories();
-  updateStats();
-  renderInventory(globalInventory);
-  renderLogs(globalLogs);
+    populateCategories();
+    updateStats();
+
+    renderInventory(globalInventory);
+    renderLogs(globalLogs);
+
+  } catch (err) {
+    console.error("Load error:", err);
+  }
 }
 
-// CATEGORY
+// ==========================
+// CATEGORY DROPDOWN
+// ==========================
 function populateCategories() {
   const select = document.getElementById("categoryFilter");
   if (!select) return;
 
   select.innerHTML = `<option value="">All Categories</option>`;
+
   const categories = [...new Set(globalInventory.map(i => i.category))];
 
-  categories.forEach(c => {
+  categories.forEach(cat => {
     const option = document.createElement("option");
-    option.value = c;
-    option.textContent = c;
+    option.value = cat;
+    option.textContent = cat;
     select.appendChild(option);
   });
 }
 
+// ==========================
 // STATS
+// ==========================
 function updateStats() {
   document.getElementById("totalItems")?.textContent = globalInventory.length;
   document.getElementById("totalQty")?.textContent = globalInventory.reduce((s,i)=>s+i.qty,0);
   document.getElementById("lowCount")?.textContent = globalInventory.filter(i=>i.qty<=3).length;
 }
 
+// ==========================
 // FILTER
+// ==========================
 function filterItems() {
   const search = document.getElementById("search")?.value.toLowerCase() || "";
   const cat = document.getElementById("categoryFilter")?.value;
@@ -51,29 +66,40 @@ function filterItems() {
   renderInventory(list);
 }
 
-// INVENTORY
+// ==========================
+// INVENTORY DISPLAY
+// ==========================
 function renderInventory(list) {
   const el = document.getElementById("inventoryList");
   if (!el) return;
 
   el.innerHTML = "";
+
   list.sort((a,b)=>a.qty-b.qty);
 
   list.forEach(i=>{
     const div = document.createElement("div");
     div.className = "stock-item";
     if (i.qty<=3) div.classList.add("low");
-    div.innerHTML = `<span>${i.name} (${i.category})</span><span>${i.qty}</span>`;
+
+    div.innerHTML = `
+      <span>${i.name} (${i.category})</span>
+      <span>${i.qty}</span>
+    `;
+
     el.appendChild(div);
   });
 }
 
+// ==========================
 // LOGS
+// ==========================
 function renderLogs(logs) {
   const el = document.getElementById("logList");
   if (!el) return;
 
   el.innerHTML="";
+
   logs.slice(-10).reverse().forEach(l=>{
     const li=document.createElement("li");
     li.textContent=`${l.name} ${l.action} ${l.qty} ${l.item}`;
@@ -81,11 +107,14 @@ function renderLogs(logs) {
   });
 }
 
+// ==========================
 // SEARCH SUGGESTIONS
+// ==========================
 function showSuggestions() {
   const input=document.getElementById("itemSearch");
   const box=document.getElementById("suggestions");
-  if (!input||!box) return;
+
+  if (!input || !box) return;
 
   const search=input.value.toLowerCase();
   box.innerHTML="";
@@ -95,44 +124,87 @@ function showSuggestions() {
     .forEach(i=>{
       const div=document.createElement("div");
       div.textContent=`${i.name} (${i.qty})`;
+
       div.onclick=()=>{
         input.value=i.name;
         box.innerHTML="";
       };
+
       box.appendChild(div);
     });
 }
 
+// ==========================
 // WITHDRAW
+// ==========================
 async function withdraw() {
-  const name=document.getElementById("name").value;
-  const item=document.getElementById("itemSearch").value;
+  const name=document.getElementById("name").value.trim();
+  const itemInput=document.getElementById("itemSearch").value.trim();
   const qty=parseInt(document.getElementById("qty").value);
 
-  if(!name||!item||!qty)return alert("Fill properly");
+  if (!name || !itemInput || !qty) {
+    alert("Fill all fields properly");
+    return;
+  }
+
+  const match = globalInventory.find(i =>
+    i.name.toLowerCase() === itemInput.toLowerCase()
+  );
+
+  if (!match) {
+    alert("Item not found. Please select from suggestions.");
+    return;
+  }
 
   await fetch(API_URL,{
     method:"POST",
-    body:JSON.stringify({name,item,qty,change:-qty,action:"withdrew"})
+    body:JSON.stringify({
+      name,
+      item: match.name,
+      qty,
+      change:-qty,
+      action:"withdrew"
+    })
   });
 
-  alert("Done");
+  alert("Withdraw successful");
 }
 
+// ==========================
 // RETURN
+// ==========================
 async function returnItem() {
-  const name=document.getElementById("name").value;
-  const item=document.getElementById("itemSearch").value;
+  const name=document.getElementById("name").value.trim();
+  const itemInput=document.getElementById("itemSearch").value.trim();
   const qty=parseInt(document.getElementById("qty").value);
 
-  if(!name||!item||!qty)return alert("Fill properly");
+  if (!name || !itemInput || !qty) {
+    alert("Fill all fields properly");
+    return;
+  }
+
+  const match = globalInventory.find(i =>
+    i.name.toLowerCase() === itemInput.toLowerCase()
+  );
+
+  if (!match) {
+    alert("Item not found. Please select from suggestions.");
+    return;
+  }
 
   await fetch(API_URL,{
     method:"POST",
-    body:JSON.stringify({name,item,qty,change:qty,action:"returned"})
+    body:JSON.stringify({
+      name,
+      item: match.name,
+      qty,
+      change: qty,
+      action:"returned"
+    })
   });
 
-  alert("Done");
+  alert("Return successful");
 }
 
-window.onload=loadData;
+// ==========================
+window.onload = loadData;
