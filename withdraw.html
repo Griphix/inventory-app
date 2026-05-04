@@ -6,6 +6,7 @@
 
   <style>
     body {
+      margin: 0;
       font-family: Arial;
       background: #eef2f3;
       display: flex;
@@ -14,43 +15,86 @@
       height: 100vh;
     }
 
-    .box {
+    .card {
       background: white;
-      padding: 25px;
-      border-radius: 12px;
+      padding: 30px 25px;
+      border-radius: 16px;
       width: 320px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
     }
 
-    h2 { text-align: center; }
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #333;
+    }
 
-    input, select, button {
-      width: 100%;
-      padding: 10px;
+    label {
+      font-size: 13px;
+      color: #666;
       margin-top: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
+      display: block;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin-top: 5px;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+      font-size: 14px;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #27ae60;
     }
 
     button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 20px;
+      border-radius: 12px;
+      border: none;
       background: #27ae60;
       color: white;
-      border: none;
       font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #219150;
+    }
+
+    .back {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 13px;
+      color: #888;
+      cursor: pointer;
     }
   </style>
 </head>
 
 <body>
 
-<div class="box">
+<div class="card">
   <h2>Withdraw Item</h2>
 
-  <input id="name" placeholder="Your Name">
-  <select id="itemSelect"></select>
-  <input id="qty" type="number" placeholder="Quantity">
+  <label>Your Name</label>
+  <input id="name" placeholder="e.g. Haneef">
 
-  <button onclick="submitWithdraw()">Submit</button>
+  <label>Select Item</label>
+  <select id="itemSelect"></select>
+
+  <label>Quantity</label>
+  <input id="qty" type="number" placeholder="e.g. 2">
+
+  <button onclick="submitWithdraw()">Withdraw</button>
+
+  <div class="back" onclick="location.href='index.html'">← Back to dashboard</div>
 </div>
 
 <script>
